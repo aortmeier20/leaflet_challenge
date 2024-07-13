@@ -18,46 +18,39 @@ function createMap(earthquakes) {
         var myMap = L.map("map", {
             center: [44.58, -103.46],
             zoom: 5,
-            layers: [street]
+            layers: [street, earthquakes]
         });
-    
-        // adding earthquake and plate
-        let earthquake_data = new L.LayerGroup();
 
-        //link layergroups
-        let overlays = {
-            "Earthquakes": earthquake_data,
+
+    // Create a control
+    // Pass in baseMaps and overlayMaps
+    // Add the control to the map
+    L.control.layers(baseMaps, overlayMaps, {
+        collapsed: false
+    }).addTo(myMap); 
+    
+    let legend = L.control({position: 'bottomright'});
+
+    legend.onAdd = function (myMap) {
+
+        let div = L.DomUtil.create('div', 'info legend'),
+            grades = [-10, 10, 30, 60, 90],
+            labels = [],
+            legendInfo = "<h5>Magnitude</h5>";
+
+        for (let i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + markerColor(grades[i] + 1) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }    
+
+        return div;
+
         };
 
-        // Create a control
-        // Pass in baseMaps and overlayMaps
-        // Add the control to the map
-        L.control.layers(baseMaps, overlayMaps,).addTo(myMap); 
-        
-        let legend = L.control({position: 'bottomright'});
-    
-        legend.onAdd = function (myMap) {
-    
-            let div = L.DomUtil.create('div', 'info legend'),
-                grades = [-10, 10, 30, 60, 90],
-                labels = [],
-                legendInfo = "<h5>Magnitude</h5>";
-    
-            for (let i = 0; i < grades.length; i++) {
-                div.innerHTML +=
-                    '<i style="background:' + markerColor(grades[i] + 1) + '"></i> ' +
-                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
-            }    
-    
-            return div;
-    
-            };
-    
-            // Add legend to map
-            legend.addTo(myMap);
-    }
-
-
+        // Add legend to map
+        legend.addTo(myMap);
+}
 
 // Create markers whose size increases with magnitude and color with depth
 function createMarker(feature, latlng) {
@@ -69,5 +62,31 @@ function createMarker(feature, latlng) {
         opacity: 0.5,
         fillOpacity: 1
     });
+}
+
+
+
+
+
+
+
+
+
+
+
+function createFeatures(earthquakeData) {
+    //add fuctions on popup
+    function onEachFeature(feature, layer) {
+        layer.bindPopup(`<h3>Location:</h3> ${feature.properties.place}<h3> Magnitude:</h3> ${feature.properties.mag}<h3> Depth:</h3> ${feature.geometry.coordinates[2]}`);
+    }
+
+    // Create a GeoJSON layer that contains the features array on the earthquakeData object
+    let earthquakes = L.geoJSON(earthquakeData, {
+        onEachFeature: onEachFeature,
+        pointToLayer: createMarker
+    });
+
+    // add to map fucntion
+    createMap(earthquakes);
 }
 
