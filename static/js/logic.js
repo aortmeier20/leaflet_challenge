@@ -26,7 +26,6 @@ function createMap(earthquakes) {
     // Pass in baseMaps and overlayMaps
     // Add the control to the map
     L.control.layers(baseMaps, overlayMaps, {
-        collapsed: false
     }).addTo(myMap); 
     
     let legend = L.control({position: 'bottomright'});
