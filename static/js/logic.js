@@ -18,15 +18,21 @@ function createMap(earthquakes) {
         var myMap = L.map("map", {
             center: [44.58, -103.46],
             zoom: 5,
-            layers: [street, earthquakes]
+            layers: [street]
         });
     
+        // adding earthquake and plate
+        let earthquake_data = new L.LayerGroup();
+
+        //link layergroups
+        let overlays = {
+            "Earthquakes": earthquake_data,
+        };
+
         // Create a control
         // Pass in baseMaps and overlayMaps
         // Add the control to the map
-        L.control.layers(baseMaps, overlayMaps, {
-            collapsed: false
-        }).addTo(myMap); 
+        L.control.layers(baseMaps, overlayMaps,).addTo(myMap); 
         
         let legend = L.control({position: 'bottomright'});
     
