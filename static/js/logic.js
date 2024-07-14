@@ -95,3 +95,4 @@ function createFeatures(earthquakeData) {
     createMap(earthquakes);
 }
 
+
